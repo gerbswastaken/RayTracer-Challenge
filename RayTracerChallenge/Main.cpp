@@ -74,69 +74,6 @@ int getUpperLimit(int currentIndex, int maxIndex, int height) {
 	return ((currentIndex + 1) * (height / constants::gNumOfThreads));
 }
 
-/*
-
-//This is the old main function, with no Hitable Object
-int main() {
-	Point cameraFrom(10.0f, 10.0f, 6.25f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
-	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
-	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 3.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
-
-	Material materialRed(Color(0.99f, 0.0f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialGreen(Color(0.0f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialBlue(Color(0.0f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 200.0f);
-
-	std::vector<Sphere> objectList;
-	objectList.push_back(Sphere(1, Matrix::createTranslationMatrix(0.0f, 0.0f, 2.0f), materialRed));
-	objectList.push_back(Sphere(2, Matrix::createTranslationMatrix(0.0f, 0.0f, -15.0f) * Matrix::createScalingMatrix(10.0f, 10.0f, 10.0f), materialGreen));
-	objectList.push_back(Sphere(3, Matrix::createTranslationMatrix(0.0f, 0.0f, 10.0f) * Matrix::createScalingMatrix(1.5f, 1.5f, 1.5f), materialBlue));
-
-	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(0.0f, 0.0f, 8.0f), Color(1.0f, 1.0f, 1.0f)));
-
-	World world(objectList, lightList);
-
-	std::vector<std::vector<Color>> colorArrayParts;
-	colorArrayParts.reserve(constants::gNumOfThreads);
-
-	for (int i = 0; i < constants::gNumOfThreads; ++i) {
-		std::vector<Color> temp;
-		colorArrayParts.push_back(temp);
-		colorArrayParts[i].reserve(((constants::gWidth * constants::gHeight) / constants::gNumOfThreads) + 1);
-	}
-
-	std::vector<std::thread> threadVector;
-	threadVector.reserve(constants::gNumOfThreads);
-
-	for (int i = 0; i < constants::gNumOfThreads; ++i) {
-		threadVector.push_back(std::thread(prepareThread, std::ref(colorArrayParts[i]), std::ref(camera), std::ref(world), getLowerLimit(i, constants::gHeight), getUpperLimit(i, (constants::gNumOfThreads - 1), constants::gHeight)));
-	}
-
-	for (int i = 0; i < constants::gNumOfThreads; ++i) {
-		threadVector[i].join();
-	}
-
-	std::vector<Color> completeColorArray;
-	completeColorArray.reserve(constants::gWidth * constants::gHeight);
-	for (int i = 0; i < constants::gNumOfThreads; ++i) {
-		for (int j = 0; j < colorArrayParts[i].size(); ++j) {
-			completeColorArray.push_back((colorArrayParts[i])[j]);
-		}
-	}
-
-	std::cout << "Done with that shit!\n";
-
-	Canvas canvas(constants::gWidth, constants::gHeight, completeColorArray);
-	PPMWriter::generatePPM(canvas);
-
-	return 0;
-}
-
-*/
-
-
-
 //This is the new main function, with Hitable object
 int main() {
 	Point cameraFrom(10.0f, 10.0f, 6.25f);
@@ -197,23 +134,3 @@ int main() {
 
 	return 0;
 }
-
-/*
-void checkHitable(Hitable* object) {
-	Intersections lol;
-	std::cout << "checkHitable(Hitable* objcet) works!\n";
-	object->setTransformationMatrix(Matrix::createTranslationMatrix(1.0f, 1.0f, 1.0f));
-	std::cout << object->getTransformationMatrix() << '\n';
-	std::cout << object->hit(Ray(Point(0.0f, 0.0f, 0.0f), Vector(1.0f, 1.0f, 1.0f)), lol)<<'\n';
-	std::cout << object->getNormalAtPoint(Point(1.0f,0.0f,0.0f))<<'\n';
-}
-
-int main() {
-	TestObject testObject(3, Matrix::createIdentityMatrix(4), Material(Color(1.0f, 0.0f, 1.0f), 0.2f, 0.7f, 0.7f, 200.0f), true);
-	Sphere sphereObject(1, Matrix::createRotationMatrix('x', 2.0f, true), Material(Color(1.0f, 0.0f, 1.0f), 0.2f, 0.7f, 0.7f, 200.0f));
-	std::cout << testObject.getNormalAtPoint(Point(0.0f, 0.0f, 0.0f)) << '\n';
-	std::cout << testObject.getTransformationMatrix() << '\n';
-	checkHitable(&sphereObject);
-	return 0;
-}
-*/
