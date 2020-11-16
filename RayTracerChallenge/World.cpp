@@ -27,7 +27,7 @@ PointLight& World::getLight(int index) {
 
 bool World::hit(const Ray& ray, Intersections& intersections, Hitable** hitObject) {
 	bool hitAnything = false;
-	//Iterate through all of the objects in the 
+	//Iterate through all of the objects in the m_objectList
 	for (int i = 0; i < m_objectList.size(); ++i) {
 		//If any intersection occurs
 		if (m_objectList[i]->hit(ray, intersections)) {
