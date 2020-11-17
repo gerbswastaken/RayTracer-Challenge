@@ -6,6 +6,7 @@
 
 #include "Ray.h"
 #include "Sphere.h"
+#include "Plane.h"
 #include "PointLight.h"
 #include "World.h"
 #include "Camera.h"
@@ -24,25 +25,10 @@
 #include <thread>
 #include <functional>
 
-//Bunch of Forward Declarations
-Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera);
-void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& world, int beginY, int endY);
-int getLowerLimit(int currentIndex, int height);
-int getUpperLimit(int currentIndex, int maxIndex, int height);
+/*
+old image
 
-
-//I'll give a quick rundown of how to use this thing
-//I'm planning on adding a better system of doing this rather than changing main()
-//Maybe with passing arguments via a file or something, but for now this will do
-
-//Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
-
-//Now we begin the actual main() function
-int main() {
-	//This Ray-Tracer uses a Right-handed coordinate system:
-	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
-
-	//This is pretty self-explanatory
+//This is pretty self-explanatory
 	Point cameraFrom(10.0f, 10.0f, 6.25f);
 	Point cameraTo(0.0f, 0.0f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
@@ -71,6 +57,50 @@ int main() {
 	//Add light sources here
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(0.0f, 0.0f, 8.0f), Color(1.0f, 1.0f, 1.0f)));
+
+
+*/
+
+
+//Bunch of Forward Declarations
+Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera);
+void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& world, int beginY, int endY);
+int getLowerLimit(int currentIndex, int height);
+int getUpperLimit(int currentIndex, int maxIndex, int height);
+
+//I'll give a quick rundown of how to use this thing
+//I'm planning on adding a better system of doing this rather than changing main()
+//Maybe with passing arguments via a file or something, but for now this will do
+
+//Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
+
+//Now we begin the actual main() function
+int main() {
+	//This Ray-Tracer uses a Right-handed coordinate system:
+	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
+
+	Point cameraFrom(0.0f, 0.0f, 9.0f);
+	Point cameraTo(0.0f, 0.0f, 0.0f);
+	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
+	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
+
+	Material materialRed(Color(0.99f, 0.0f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
+	Material materialOrange(Color(0.99f, 0.647f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
+	Material materialYellow(Color(0.99f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
+	Material materialGreen(Color(0.0f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
+	Material materialBlue(Color(0.0f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 200.0f);
+	Material materialPurple(Color(0.99f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 300.0f);
+	
+	std::vector<Hitable*> objectList;
+	objectList.push_back(new Plane(1, Matrix::createTranslationMatrix(0.0f, -5.0f, 0.0f), materialRed));
+	objectList.push_back(new Plane(2, Matrix::createTranslationMatrix(0.0f, 5.0f, 0.0f), materialGreen));
+	objectList.push_back(new Plane(3, Matrix::createTranslationMatrix(5.0f, 0.0f, 0.0f) * Matrix::createRotationMatrix('z', (constants::gPI / 2.0f), true), materialOrange));
+	objectList.push_back(new Plane(4, Matrix::createTranslationMatrix(-5.0f, 0.0f, 0.0f) * Matrix::createRotationMatrix('z', (constants::gPI / 2.0f), true), materialYellow));
+	objectList.push_back(new Plane(5, Matrix::createTranslationMatrix(0.0f, 0.0f, -5.0f) * Matrix::createRotationMatrix('x', (constants::gPI / 2.0f), true), materialBlue));
+	objectList.push_back(new Sphere(6, Matrix::createTranslationMatrix(2.0f, 2.0f, 0.0f), materialPurple));
+
+	std::vector<PointLight> lightList;
+	lightList.push_back(PointLight(Point(0.0f, 0.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
 
 	//Generates a World object
 	World world(objectList, lightList);

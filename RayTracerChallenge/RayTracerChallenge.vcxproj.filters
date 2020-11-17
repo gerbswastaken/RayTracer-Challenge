@@ -57,9 +57,6 @@
     <ClCompile Include="Vector.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
-    <ClCompile Include="MathToolbox.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>Source Files\Testing</Filter>
     </ClCompile>
