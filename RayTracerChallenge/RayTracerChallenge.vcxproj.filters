@@ -111,6 +111,9 @@
     <ClCompile Include="TestObject.cpp">
       <Filter>Source Files\Objects\Primitives</Filter>
     </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files\Objects\Primitives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tuple.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files\Objects\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="TestObject.h">
+      <Filter>Header Files\Objects\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
       <Filter>Header Files\Objects\Primitives</Filter>
     </ClInclude>
   </ItemGroup>

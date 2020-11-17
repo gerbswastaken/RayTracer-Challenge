@@ -122,6 +122,7 @@ int main() {
 	return 0;
 }
 
+
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera) {
 	//The x and y offset values that point to the point in space that represents the center of the pixel we want to draw a ray to
 	//The 0.5f gives us the center of that pixel. Without the 0.5f, we would get the top left corner, which might look weird
@@ -152,7 +153,7 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			IntersectionComputations computations;
 
 			if (world.hit(tempRay, intersections, computations)) {
-				std::cout << "World hit!\n";
+				//std::cout << "World hit!\n";
 				computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
 				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world));
 			}

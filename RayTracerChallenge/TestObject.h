@@ -10,8 +10,8 @@ class TestObject : public Hitable {
 	public:
 	TestObject(int id, const Matrix& transformationMatrix, const Material& material, bool isTestObject);
 
-	bool hit(const Ray& ray, Intersections& intersections) override;
-	Vector getNormalAtPoint(const Point& point) override;
+	bool localIntersect(const Ray& localRay, Intersections& intersections) override;
+	Vector getLocalNormalAtPoint(const Point& point) override;
 
 };
 
