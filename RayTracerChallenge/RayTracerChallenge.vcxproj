@@ -150,8 +150,8 @@
     <ClCompile Include="Intersections.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="MathToolbox.cpp" />
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="PPMWriter.cpp" />
@@ -176,6 +176,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathToolbox.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="PPMWriter.h" />

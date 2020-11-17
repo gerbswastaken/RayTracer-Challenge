@@ -14,7 +14,7 @@ class Ray {
 		Vector m_direction;
 	public:	
 		Ray(const Point& origin, const Vector& direction);
-		Ray() = delete;
+		Ray();
 		~Ray();
 
 		const Point& getOrigin() const;

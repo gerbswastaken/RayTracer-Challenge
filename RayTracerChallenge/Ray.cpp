@@ -4,6 +4,11 @@ Ray::Ray(const Point& origin, const Vector& direction) : m_origin{ origin }, m_d
 	//Nothin' in here for now LOL
 }
 
+Ray::Ray() {
+	m_origin = Point(0.0f, 0.0f, 0.0f);
+	m_direction = Vector(1.0f, 1.0f, 1.0f);
+}
+
 Ray::~Ray() {
 	//Nothing in here for now LOL
 }

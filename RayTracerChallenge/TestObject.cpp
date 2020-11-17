@@ -4,12 +4,12 @@ TestObject::TestObject(int id, const Matrix& transformationMatrix, const Materia
 	m_isTestObject = isTestObject;
 }
 
-bool TestObject::hit(const Ray& ray, Intersections& intersections) {
-	std::cout << "bool hit(const Ray& ray, Intersections& intersections) has been called!\n";
-	return false;
+bool TestObject::localIntersect(const Ray& localRay, Intersections& intersections) {
+	std::cout << "bool localIntersect(const Ray& localRay, Intersections& intersections) has been called!\n";
+	return true;
 }
 
-Vector TestObject::getNormalAtPoint(const Point& point) {
-	std::cout << "Vector getNormalAtPoint(const Point& point) has been called!\n";
-	return Vector(1.0f,1.0f,1.0f);
+Vector TestObject::getLocalNormalAtPoint(const Point& point) {
+	std::cout << "Vector getLocalNormalAtPoint(const Point& point) has been called!\n";
+	return (Vector)point;
 }

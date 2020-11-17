@@ -26,9 +26,11 @@ class Sphere : public Hitable {
 		Sphere(int id, const Matrix& transformationMatrix, const Material& material);
 		~Sphere();
 
-		Vector getNormalAtPoint(const Point& point) override;
+		bool localIntersect(const Ray& localRay, Intersections& intersections) override;
 
-		bool hit(const Ray& ray, Intersections& intersections) override;
+		Vector getLocalNormalAtPoint(const Point& localPoint) override;
+
+		//bool hit(const Ray& ray, Intersections& intersections) override;
 };
 
 #endif
