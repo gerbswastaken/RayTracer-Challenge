@@ -25,42 +25,6 @@
 #include <thread>
 #include <functional>
 
-/*
-old image
-
-//This is pretty self-explanatory
-	Point cameraFrom(10.0f, 10.0f, 6.25f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
-	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
-	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 3.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
-
-	//Initialize Materials for the Objects here
-	Material materialRed(Color(0.99f, 0.0f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialGreen(Color(0.0f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialBlue(Color(0.0f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 200.0f);
-
-	//Add as many objects as you want here
-	std::vector<Hitable*> objectList;
-	//About the trandsformationMatrix associated with each object, you can multiply multiple matrices together
-	//To create a matrix representing the total transformation.
-	//Just make sure to multiply them in the proper order:
-
-	//That being: Multiply them in the reverse order of what transformations you want applied to them
-	//For example, if you want to Skew first, rotate, and then translate, we would write:
-	//Matrix::createTransformationMatrix() * Matrix::createRotationMatrix() * Matrix::createSkewMatrix()
-	//To get the effective Matrix
-
-	objectList.push_back(new Sphere(1, Matrix::createTranslationMatrix(0.0f, 0.0f, 2.0f), materialRed));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 0.0f, -15.0f) * Matrix::createScalingMatrix(10.0f, 10.0f, 10.0f), materialGreen));
-	objectList.push_back(new Sphere(3, Matrix::createTranslationMatrix(0.0f, 0.0f, 10.0f) * Matrix::createScalingMatrix(1.5f, 1.5f, 1.5f), materialBlue));
-
-	//Add light sources here
-	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(0.0f, 0.0f, 8.0f), Color(1.0f, 1.0f, 1.0f)));
-
-
-*/
-
 
 //Bunch of Forward Declarations
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera);
