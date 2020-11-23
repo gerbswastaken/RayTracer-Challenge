@@ -144,6 +144,7 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="GradientPattern.cpp" />
     <ClCompile Include="Hitable.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="IntersectionComputations.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="GradientPattern.h" />
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="IntersectionComputations.h" />

@@ -123,6 +123,9 @@
     <ClCompile Include="StripePattern.cpp">
       <Filter>Source Files\Objects\Pattern</Filter>
     </ClCompile>
+    <ClCompile Include="GradientPattern.cpp">
+      <Filter>Source Files\Objects\Pattern</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tuple.h">
@@ -198,6 +201,9 @@
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
     <ClInclude Include="StripePattern.h">
+      <Filter>Header Files\Objects\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="GradientPattern.h">
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
   </ItemGroup>
