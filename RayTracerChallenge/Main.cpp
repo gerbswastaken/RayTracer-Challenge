@@ -17,6 +17,9 @@
 #include "Hitable.h"
 #include "TestObject.h"
 
+#include "Pattern.h"
+#include "StripePattern.h"
+
 #include "PPMWriter.h"
 
 #include <iostream>
@@ -24,42 +27,6 @@
 #include <cmath>
 #include <thread>
 #include <functional>
-
-/*
-old image
-
-//This is pretty self-explanatory
-	Point cameraFrom(10.0f, 10.0f, 6.25f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
-	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
-	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 3.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
-
-	//Initialize Materials for the Objects here
-	Material materialRed(Color(0.99f, 0.0f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialGreen(Color(0.0f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialBlue(Color(0.0f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 200.0f);
-
-	//Add as many objects as you want here
-	std::vector<Hitable*> objectList;
-	//About the trandsformationMatrix associated with each object, you can multiply multiple matrices together
-	//To create a matrix representing the total transformation.
-	//Just make sure to multiply them in the proper order:
-
-	//That being: Multiply them in the reverse order of what transformations you want applied to them
-	//For example, if you want to Skew first, rotate, and then translate, we would write:
-	//Matrix::createTransformationMatrix() * Matrix::createRotationMatrix() * Matrix::createSkewMatrix()
-	//To get the effective Matrix
-
-	objectList.push_back(new Sphere(1, Matrix::createTranslationMatrix(0.0f, 0.0f, 2.0f), materialRed));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 0.0f, -15.0f) * Matrix::createScalingMatrix(10.0f, 10.0f, 10.0f), materialGreen));
-	objectList.push_back(new Sphere(3, Matrix::createTranslationMatrix(0.0f, 0.0f, 10.0f) * Matrix::createScalingMatrix(1.5f, 1.5f, 1.5f), materialBlue));
-
-	//Add light sources here
-	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(0.0f, 0.0f, 8.0f), Color(1.0f, 1.0f, 1.0f)));
-
-
-*/
 
 
 //Bunch of Forward Declarations
@@ -73,34 +40,45 @@ int getUpperLimit(int currentIndex, int maxIndex, int height);
 //Maybe with passing arguments via a file or something, but for now this will do
 
 //Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
+/*
+int main() {
+	Vector eyeVector(0.0f, 0.0f, -1.0f);
+	Vector normalVector(0.0f, 0.0f, -1.0f);
+	PointLight light(Point(0.0f,0.0f,-10.0f), Color(1.0f,1.0f,1.0f));
+	StripePattern* sPat = new StripePattern(Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
+	Material material(Color(0.5f, 0.5f, 0.5f), 1.0f, 0.0f, 0.0f, 0.0f);
+	std::cout << PointLight::getLighting(material, light, Point(0.9f, 0.0f, 0.0f), eyeVector, normalVector, false)<<'\n';
+	std::cout << PointLight::getLighting(material, light, Point(1.1f, 0.0f, 0.0f), eyeVector, normalVector, false) << '\n';
+	delete sPat;
+	return 0;
+}
+*/
+
 
 //Now we begin the actual main() function
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(0.0f, 0.0f, 9.0f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
+	Point cameraFrom(-3.0f, 3.0f, 3.0f);
+	Point cameraTo(0.0f, 1.0f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	Material materialRed(Color(0.99f, 0.0f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialOrange(Color(0.99f, 0.647f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialYellow(Color(0.99f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialGreen(Color(0.0f, 0.99f, 0.0f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialBlue(Color(0.0f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 200.0f);
-	Material materialPurple(Color(0.99f, 0.0f, 0.99f), 0.2f, 0.4f, 0.7f, 300.0f);
+	StripePattern* sPat = new StripePattern(Matrix::createRotationMatrix('y', (constants::gPI / 4.0f), true), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
+
+	Material materialPlane(sPat, 0.1f, 0.7f, 0.3f, 100.0f);
+	Material materialBall(Color(0.00f, 0.99f, 0.0f), 0.1f, 0.8f, 0.2f, 250.0f);
 	
+	
+
 	std::vector<Hitable*> objectList;
-	objectList.push_back(new Plane(1, Matrix::createTranslationMatrix(0.0f, -5.0f, 0.0f), materialRed));
-	objectList.push_back(new Plane(2, Matrix::createTranslationMatrix(0.0f, 5.0f, 0.0f), materialGreen));
-	objectList.push_back(new Plane(3, Matrix::createTranslationMatrix(5.0f, 0.0f, 0.0f) * Matrix::createRotationMatrix('z', (constants::gPI / 2.0f), true), materialOrange));
-	objectList.push_back(new Plane(4, Matrix::createTranslationMatrix(-5.0f, 0.0f, 0.0f) * Matrix::createRotationMatrix('z', (constants::gPI / 2.0f), true), materialYellow));
-	objectList.push_back(new Plane(5, Matrix::createTranslationMatrix(0.0f, 0.0f, -5.0f) * Matrix::createRotationMatrix('x', (constants::gPI / 2.0f), true), materialBlue));
-	objectList.push_back(new Sphere(6, Matrix::createTranslationMatrix(2.0f, 2.0f, 0.0f), materialPurple));
+	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
+	objectList.push_back(new Sphere(2, Matrix::createIdentityMatrix(4), materialBall));
 
 	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(0.0f, 0.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(-8.0f, 4.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
 
 	//Generates a World object
 	World world(objectList, lightList);
@@ -185,7 +163,7 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			if (world.hit(tempRay, intersections, computations)) {
 				//std::cout << "World hit!\n";
 				computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
-				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world));
+				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world, computations.m_object));
 			}
 			else {
 				colorArray.push_back(Color(0.0f, 0.0f, 0.0f));
