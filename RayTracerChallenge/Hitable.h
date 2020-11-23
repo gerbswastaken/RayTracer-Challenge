@@ -24,6 +24,8 @@ class Hitable {
 		void setMaterial(const Material& material);
 		void setSavedRay(const Ray& localRay);
 
+		Color getMaterialColor(const Point& point);
+
 		virtual Ray getLocalRay(const Ray& incidentRay);
 
 		virtual bool localIntersect(const Ray& localRay, Intersections& intersections) = 0;

@@ -31,8 +31,11 @@ Color PointLight::getLighting(const Material& material, const PointLight& pointL
 	Color diffuseColor;
 	Color specularColor;
 
+	Color effectiveColor;
+
 	//Combining the Color of the Material and the Color of the Light Source itself
-	Color effectiveColor = Color::halamardProduct(material.m_color,  pointLight.getIntensity());
+	if(material.m_hasPattern) effectiveColor = Color::halamardProduct(material.m_pattern->getColor(position), pointLight.getIntensity());
+	else effectiveColor = Color::halamardProduct(material.m_color,  pointLight.getIntensity());
 
 	ambientColor = (Color) (effectiveColor * material.m_ambient) ;
 
