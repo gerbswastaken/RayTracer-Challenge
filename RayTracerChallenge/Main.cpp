@@ -65,7 +65,7 @@ int main() {
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	StripePattern* sPat = new StripePattern(Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
+	StripePattern* sPat = new StripePattern(Matrix::createRotationMatrix('y', (constants::gPI / 4.0f), true), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
 
 	Material materialPlane(sPat, 0.1f, 0.7f, 0.3f, 100.0f);
 	Material materialBall(Color(0.00f, 0.99f, 0.0f), 0.1f, 0.8f, 0.2f, 250.0f);
@@ -163,7 +163,7 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			if (world.hit(tempRay, intersections, computations)) {
 				//std::cout << "World hit!\n";
 				computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
-				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world));
+				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world, computations.m_object));
 			}
 			else {
 				colorArray.push_back(Color(0.0f, 0.0f, 0.0f));

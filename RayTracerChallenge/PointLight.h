@@ -7,6 +7,7 @@
 
 #include "Material.h"
 #include "IntersectionComputations.h"
+#include "Pattern.h"
 
 #include <cmath>
 #include <vector>
@@ -27,8 +28,8 @@ class PointLight {
 		void setPosition(const Point& newPosition);
 		void setIntensity(const Color& newIntensity);
 
-		static Color getLighting(const Material& material, const PointLight& pointLight, const Point& position, const Vector& eyeVector, const Vector& normalVector, bool isInShadow);
-		static Color getLighting(const Material& material, const std::vector<PointLight>& lightList, const Point& position, const Vector& eyeVector, const Vector& normalVector, World& world);
+		static Color getLighting(const Material& material, const PointLight& pointLight, const Point& position, const Vector& eyeVector, const Vector& normalVector, bool isInShadow, Hitable* object);
+		static Color getLighting(const Material& material, const std::vector<PointLight>& lightList, const Point& position, const Vector& eyeVector, const Vector& normalVector, World& world, Hitable* object);
 
 		static bool isInShadow(const Point& point, World& world, const PointLight& light);
 };

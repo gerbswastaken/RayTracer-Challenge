@@ -25,7 +25,7 @@ void PointLight::setIntensity(const Color& newIntensity) {
 	m_intensity = newIntensity;
 }
 
-Color PointLight::getLighting(const Material& material, const PointLight& pointLight, const Point& position, const Vector& eyeVector, const Vector& normalVector, bool isInShadow) {
+Color PointLight::getLighting(const Material& material, const PointLight& pointLight, const Point& position, const Vector& eyeVector, const Vector& normalVector, bool isInShadow, Hitable* object) {
 	//The superposition of these three colors give the final color, according to the Phong Reflection Model
 	Color ambientColor;
 	Color diffuseColor;
@@ -34,7 +34,7 @@ Color PointLight::getLighting(const Material& material, const PointLight& pointL
 	Color effectiveColor;
 
 	//Combining the Color of the Material and the Color of the Light Source itself
-	if(material.m_hasPattern) effectiveColor = Color::halamardProduct(material.m_pattern->getColor(position), pointLight.getIntensity());
+	if(material.m_hasPattern) effectiveColor = Color::halamardProduct(material.m_pattern->getColor(position, object), pointLight.getIntensity());
 	else effectiveColor = Color::halamardProduct(material.m_color,  pointLight.getIntensity());
 
 	ambientColor = (Color) (effectiveColor * material.m_ambient) ;
@@ -72,10 +72,10 @@ Color PointLight::getLighting(const Material& material, const PointLight& pointL
 	return ambientColor;
 }
 
-Color PointLight::getLighting(const Material& material, const std::vector<PointLight>& lightList, const Point& position, const Vector& eyeVector, const Vector& normalVector, World& world) {
+Color PointLight::getLighting(const Material& material, const std::vector<PointLight>& lightList, const Point& position, const Vector& eyeVector, const Vector& normalVector, World& world, Hitable* object) {
 	Color finalColor(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < lightList.size(); ++i) {
-		finalColor += getLighting(material, lightList[i], position, eyeVector, normalVector, isInShadow(position, world, lightList[i]));
+		finalColor += getLighting(material, lightList[i], position, eyeVector, normalVector, isInShadow(position, world, lightList[i]), object);
 	}
 	return finalColor;
 }

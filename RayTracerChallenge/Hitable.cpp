@@ -47,8 +47,3 @@ Vector Hitable::getNormalAtPoint(const Point& point) {
 	worldNormal[3] = 0.0f;
 	return worldNormal.getNormalizedVector();
 }
-
-Color Hitable::getMaterialColor(const Point& point) {
-	if (m_material.m_hasPattern) return m_material.m_pattern->getColor(point);
-	return m_material.m_color;
-}

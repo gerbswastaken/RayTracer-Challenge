@@ -2,7 +2,8 @@
 #define MATERIAL_H
 
 #include "Color.h"
-#include "Pattern.h"
+
+class Pattern;
 
 class Material {
 	public:
