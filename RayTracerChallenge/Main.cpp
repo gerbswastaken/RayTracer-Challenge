@@ -20,6 +20,7 @@
 #include "Pattern.h"
 #include "StripePattern.h"
 #include "GradientPattern.h"
+#include "RingPattern.h"
 
 #include "PPMWriter.h"
 
@@ -61,25 +62,23 @@ int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(2.0f, 3.0f, 3.0f);
-	Point cameraTo(5.0f, 1.0f, 0.0f);
+	Point cameraFrom(0.0f, 5.0f, 2.0f);
+	Point cameraTo(0.0f, 0.0f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	GradientPattern* gPat = new GradientPattern(Matrix::createRotationMatrix('y', (constants::gPI / 3.0f), true) * Matrix::createScalingMatrix(15.0f, 15.0f, 15.0f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 1.0f, 0.0f));
+	RingPattern* gPat = new RingPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 1.0f, 0.0f));
 
 	Material materialPlane(gPat, 0.1f, 0.7f, 0.3f, 100.0f);
 	Material materialBall(Color(0.00f, 0.00f, 0.99f), 0.1f, 0.8f, 0.2f, 250.0f);
 	
-	
-
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(5.0f,0.3f,0.0f), materialBall));
+	//objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,0.3f,0.0f), materialBall));
 
 	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(12.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
-	lightList.push_back(PointLight(Point(-3.0f, 4.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(2.0f, 4.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
 
 	//Generates a World object
 	World world(objectList, lightList);

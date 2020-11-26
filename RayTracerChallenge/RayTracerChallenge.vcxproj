@@ -159,6 +159,7 @@
     <ClCompile Include="PPMWriter.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RingPattern.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StripePattern.cpp" />
     <ClCompile Include="TestObject.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="PPMWriter.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="RingPattern.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StripePattern.h" />
     <ClInclude Include="TestObject.h" />
