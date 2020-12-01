@@ -129,6 +129,9 @@
     <ClCompile Include="RingPattern.cpp">
       <Filter>Source Files\Objects\Pattern</Filter>
     </ClCompile>
+    <ClCompile Include="CheckersPattern.cpp">
+      <Filter>Source Files\Objects\Pattern</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tuple.h">
@@ -210,6 +213,9 @@
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
     <ClInclude Include="RingPattern.h">
+      <Filter>Header Files\Objects\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckersPattern.h">
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
   </ItemGroup>

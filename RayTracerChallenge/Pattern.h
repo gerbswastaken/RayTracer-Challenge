@@ -6,6 +6,8 @@
 #include "Point.h"
 #include "Matrix.h"
 
+#include <cmath>
+
 class Pattern {
 	private:
 		Matrix m_transformationMatrix;

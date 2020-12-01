@@ -21,6 +21,7 @@
 #include "StripePattern.h"
 #include "GradientPattern.h"
 #include "RingPattern.h"
+#include "CheckersPattern.h"
 
 #include "PPMWriter.h"
 
@@ -67,14 +68,15 @@ int main() {
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	RingPattern* gPat = new RingPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 1.0f, 0.0f));
+	CheckersPattern* cPat = new CheckersPattern(Matrix::createTranslationMatrix(0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f));
+	StripePattern* sPat = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
 
-	Material materialPlane(gPat, 0.1f, 0.7f, 0.3f, 100.0f);
-	Material materialBall(Color(0.00f, 0.00f, 0.99f), 0.1f, 0.8f, 0.2f, 250.0f);
+	Material materialPlane(cPat, 0.1f, 0.7f, 0.3f, 100.0f);
+	Material materialBall(sPat, 0.1f, 0.8f, 0.2f, 250.0f);
 	
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
-	//objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,0.3f,0.0f), materialBall));
+	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,0.3f,0.0f), materialBall));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));

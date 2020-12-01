@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="CheckersPattern.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GradientPattern.cpp" />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Canvas.h" />
+    <ClInclude Include="CheckersPattern.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Environment.h" />
