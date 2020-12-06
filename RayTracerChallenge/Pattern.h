@@ -18,7 +18,7 @@ class Pattern {
 		Matrix getTransformationMatrix() const;
 		void setTransformationMatrix(const Matrix& matrix);
 
-		Color getColor(const Point& worldPoint, Hitable* object);
+		virtual Color getColor(const Point& worldPoint, Hitable* object);
 
 		virtual Color getLocalColor(const Point& localPoint) = 0;
 };

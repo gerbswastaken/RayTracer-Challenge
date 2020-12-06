@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlendedPattern.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CheckersPattern.cpp" />
@@ -159,8 +160,10 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="PPMWriter.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="RadialGradientPattern.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="RingPattern.cpp" />
+    <ClCompile Include="SolidColorPattern.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="StripePattern.cpp" />
     <ClCompile Include="TestObject.cpp" />
@@ -169,6 +172,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlendedPattern.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="CheckersPattern.h" />
@@ -189,8 +193,10 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="PPMWriter.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="RadialGradientPattern.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RingPattern.h" />
+    <ClInclude Include="SolidColorPattern.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StripePattern.h" />
     <ClInclude Include="TestObject.h" />

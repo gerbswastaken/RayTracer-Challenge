@@ -11,6 +11,6 @@ StripePattern::StripePattern(const Color& color1, const Color& color2) {
 }
 
 Color StripePattern::getLocalColor(const Point& localPoint) {
-	if (((int)localPoint.getX()) % 2 == 0) return m_color1;
+	if ((int)floor(localPoint.getX()) % 2 == 0) return m_color1;
 	return m_color2;
 }

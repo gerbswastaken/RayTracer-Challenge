@@ -4,6 +4,8 @@
 #include "Pattern.h"
 #include "Color.h"
 
+#include <cmath>
+
 class StripePattern : public Pattern {
 	private:
 		Color m_color1;

@@ -132,6 +132,15 @@
     <ClCompile Include="CheckersPattern.cpp">
       <Filter>Source Files\Objects\Pattern</Filter>
     </ClCompile>
+    <ClCompile Include="RadialGradientPattern.cpp">
+      <Filter>Source Files\Objects\Pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendedPattern.cpp">
+      <Filter>Source Files\Objects\Pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidColorPattern.cpp">
+      <Filter>Source Files\Objects\Pattern</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tuple.h">
@@ -216,6 +225,15 @@
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
     <ClInclude Include="CheckersPattern.h">
+      <Filter>Header Files\Objects\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="RadialGradientPattern.h">
+      <Filter>Header Files\Objects\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendedPattern.h">
+      <Filter>Header Files\Objects\Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidColorPattern.h">
       <Filter>Header Files\Objects\Pattern</Filter>
     </ClInclude>
   </ItemGroup>

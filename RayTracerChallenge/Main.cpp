@@ -22,6 +22,9 @@
 #include "GradientPattern.h"
 #include "RingPattern.h"
 #include "CheckersPattern.h"
+#include "RadialGradientPattern.h"
+#include "BlendedPattern.h"
+#include "SolidColorPattern.h"
 
 #include "PPMWriter.h"
 
@@ -43,39 +46,28 @@ int getUpperLimit(int currentIndex, int maxIndex, int height);
 //Maybe with passing arguments via a file or something, but for now this will do
 
 //Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
-/*
-int main() {
-	Vector eyeVector(0.0f, 0.0f, -1.0f);
-	Vector normalVector(0.0f, 0.0f, -1.0f);
-	PointLight light(Point(0.0f,0.0f,-10.0f), Color(1.0f,1.0f,1.0f));
-	StripePattern* sPat = new StripePattern(Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
-	Material material(Color(0.5f, 0.5f, 0.5f), 1.0f, 0.0f, 0.0f, 0.0f);
-	std::cout << PointLight::getLighting(material, light, Point(0.9f, 0.0f, 0.0f), eyeVector, normalVector, false)<<'\n';
-	std::cout << PointLight::getLighting(material, light, Point(1.1f, 0.0f, 0.0f), eyeVector, normalVector, false) << '\n';
-	delete sPat;
-	return 0;
-}
-*/
-
 
 //Now we begin the actual main() function
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(0.0f, 5.0f, 2.0f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
+	Point cameraFrom(0.0f, 0.5f, 4.0f);
+	Point cameraTo(0.0f, 0.5f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	CheckersPattern* cPat = new CheckersPattern(Matrix::createTranslationMatrix(0.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f));
+	StripePattern* sPat1 = new StripePattern(Matrix::createIdentityMatrix(4), Color(0.3f, 0.9f, 0.3f), Color(1.0f, 1.0f, 1.0f));
+	StripePattern* sPat2 = new StripePattern(Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(0.3f, 0.9f, 0.3f), Color(0.9f, 0.9f, 0.9f));
+	BlendedPattern* bPat = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat1, sPat2);
 	StripePattern* sPat = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
 
-	Material materialPlane(cPat, 0.1f, 0.7f, 0.3f, 100.0f);
+
+	Material materialPlane(bPat, 0.1f, 0.7f, 0.3f, 100.0f);
 	Material materialBall(sPat, 0.1f, 0.8f, 0.2f, 250.0f);
 	
 	std::vector<Hitable*> objectList;
-	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
+	objectList.push_back(new Plane(1, Matrix::createRotationMatrix('x', constants::gPI / 4.0f, false), materialPlane));
 	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,0.3f,0.0f), materialBall));
 
 	std::vector<PointLight> lightList;
