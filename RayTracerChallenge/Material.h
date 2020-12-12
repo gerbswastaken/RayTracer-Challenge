@@ -13,13 +13,14 @@ class Material {
 		float m_specular;
 		float m_diffuse;
 		float m_shininess;
+		float m_reflectivity;
 
 		bool m_hasPattern; //if true, then the material has a pattern
 						   //if false, then the material has a color
 
 		Material();
-		Material(const Color& color, float ambient, float specular, float diffuse, float shininess);
-		Material(Pattern* pattern, float ambient, float specular, float diffuse, float shininess);
+		Material(const Color& color, float ambient, float specular, float diffuse, float shininess, float reflectivity);
+		Material(Pattern* pattern, float ambient, float specular, float diffuse, float shininess, float reflectivity);
 		~Material();
 
 };

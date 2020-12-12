@@ -19,6 +19,7 @@ class IntersectionComputations {
 		Point m_pointOverIntersection;
 		Vector m_eyeVector;
 		Vector m_normalAtIntersectionPoint;
+		Vector m_reflectedVector;
 
 		IntersectionComputations(const Ray& ray, const Intersection& intersection);
 		IntersectionComputations();
