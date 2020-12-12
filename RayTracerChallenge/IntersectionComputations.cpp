@@ -18,6 +18,7 @@ IntersectionComputations::IntersectionComputations(const Ray& ray, const Interse
 		m_normalAtIntersectionPoint = -(m_normalAtIntersectionPoint);
 		m_insideObject = true;
 	}
+	m_reflectedVector = Vector::getReflectedVector(ray.getDirection(), m_normalAtIntersectionPoint);
 	m_pointOverIntersection = m_intersectionPoint + (m_normalAtIntersectionPoint * constants::gEpsilon);
 	
 }

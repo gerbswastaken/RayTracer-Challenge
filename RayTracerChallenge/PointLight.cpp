@@ -25,7 +25,8 @@ void PointLight::setIntensity(const Color& newIntensity) {
 	m_intensity = newIntensity;
 }
 
-Color PointLight::getLighting(const Material& material, const PointLight& pointLight, const Point& position, const Vector& eyeVector, const Vector& normalVector, bool isInShadow, Hitable* object) {
+
+Color PointLight::getLighting(const PointLight& light, World& world, IntersectionComputations& comps, bool isInShadow) {
 	//The superposition of these three colors give the final color, according to the Phong Reflection Model
 	Color ambientColor;
 	Color diffuseColor;
@@ -34,16 +35,16 @@ Color PointLight::getLighting(const Material& material, const PointLight& pointL
 	Color effectiveColor;
 
 	//Combining the Color of the Material and the Color of the Light Source itself
-	if(material.m_hasPattern) effectiveColor = Color::halamardProduct(material.m_pattern->getColor(position, object), pointLight.getIntensity());
-	else effectiveColor = Color::halamardProduct(material.m_color,  pointLight.getIntensity());
+	if (comps.m_object->getMaterial().m_hasPattern) effectiveColor = Color::halamardProduct(comps.m_object->getMaterial().m_pattern->getColor(comps.m_intersectionPoint, comps.m_object), light.getIntensity());
+	else effectiveColor = Color::halamardProduct(comps.m_object->getMaterial().m_color, light.getIntensity());
 
-	ambientColor = (Color) (effectiveColor * material.m_ambient) ;
+	ambientColor = (Color)(effectiveColor * comps.m_object->getMaterial().m_ambient);
 
 	if (!isInShadow) {
 		//A vector that points from the position of incidence of the Ray to the given Light source
-		Vector toLight = ((Vector)(pointLight.getPosition() - position)).getNormalizedVector();
+		Vector toLight = ((Vector)(light.getPosition() - comps.m_intersectionPoint)).getNormalizedVector();
 
-		float toLight_dot_normalVector = dotProduct(toLight, normalVector);
+		float toLight_dot_normalVector = dotProduct(toLight, comps.m_normalAtIntersectionPoint);
 		//If toLight_dot_normalVector is less than 0, then the cosine of the angle between toLight and normalVector is -ve, meaning that the angle is greater than pi/2 radians
 		if (toLight_dot_normalVector < 0.0f) {
 			//This implies that the toLight vector is on the other side of the normal
@@ -52,30 +53,30 @@ Color PointLight::getLighting(const Material& material, const PointLight& pointL
 			specularColor = Color(0.0f, 0.0f, 0.0f);
 		}
 		else {
-			diffuseColor = (Color)(effectiveColor * material.m_diffuse * toLight_dot_normalVector);
+			diffuseColor = (Color)(effectiveColor * comps.m_object->getMaterial().m_diffuse * toLight_dot_normalVector);
 
 			//Now, we need to consider the Specular reflections
-			Vector reflectionVector = Vector::getReflectedVector(-toLight, normalVector);
-			float reflectionVector_dot_eyeVector = dotProduct(reflectionVector, eyeVector);
+			Vector reflectionVector = Vector::getReflectedVector(-toLight, comps.m_normalAtIntersectionPoint);
+			float reflectionVector_dot_eyeVector = dotProduct(reflectionVector, comps.m_eyeVector);
 			//If reflectionVector_dot_eyeVector is less than 0, then the reflection points away from the eye Vector
 			if (reflectionVector_dot_eyeVector <= 0) {
 				specularColor = Color(0.0f, 0.0f, 0.0f);
 			}
 			else {
-				specularColor = (Color)(pointLight.getIntensity() * material.m_specular * pow(reflectionVector_dot_eyeVector, material.m_shininess));
+				specularColor = (Color)(light.getIntensity() * comps.m_object->getMaterial().m_specular * pow(reflectionVector_dot_eyeVector, comps.m_object->getMaterial().m_shininess));
 			}
 		}
 
 		return (Color)(ambientColor + specularColor + diffuseColor);
 	}
-	
+
 	return ambientColor;
 }
 
-Color PointLight::getLighting(const Material& material, const std::vector<PointLight>& lightList, const Point& position, const Vector& eyeVector, const Vector& normalVector, World& world, Hitable* object) {
+Color PointLight::getLighting(World& world, IntersectionComputations& comps) {
 	Color finalColor(0.0f, 0.0f, 0.0f);
-	for (int i = 0; i < lightList.size(); ++i) {
-		finalColor += getLighting(material, lightList[i], position, eyeVector, normalVector, isInShadow(position, world, lightList[i]), object);
+	for (int i = 0; i < world.m_lightList.size(); ++i) {
+		finalColor += getLighting(world.m_lightList[i], world, comps, isInShadow(comps.m_pointOverIntersection, world, world.m_lightList[i]));
 	}
 	return finalColor;
 }
@@ -99,4 +100,12 @@ bool PointLight::isInShadow(const Point& point, World& world, const PointLight& 
 	}
 
 	return isInShadow;
+}
+
+Color PointLight::getReflectedColor(World& world, IntersectionComputations& computations) {
+	if (MathToolbox::equal(computations.m_object->getMaterial().m_reflectivity, 0.0f)) {
+		return Color(0.0f, 0.0f, 0.0f);
+	}
+	Ray reflectedRay = Ray(computations.m_intersectionPoint, computations.m_reflectedVector);
+	return Color(0.0f, 0.0f, 0.0f);
 }

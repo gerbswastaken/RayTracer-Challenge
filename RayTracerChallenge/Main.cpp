@@ -41,6 +41,41 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 int getLowerLimit(int currentIndex, int height);
 int getUpperLimit(int currentIndex, int maxIndex, int height);
 
+/*
+int main() {
+
+	StripePattern* sPat1 = new StripePattern(Matrix::createIdentityMatrix(4), Color(0.3f, 0.9f, 0.3f), Color(1.0f, 1.0f, 1.0f));
+	StripePattern* sPat2 = new StripePattern(Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(0.3f, 0.9f, 0.3f), Color(0.9f, 0.9f, 0.9f));
+	BlendedPattern* bPat = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat1, sPat2);
+	StripePattern* sPat = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
+
+	Material materialPlane(bPat, 0.1f, 0.7f, 0.3f, 100.0f, 0.0f);
+	Material materialBall(sPat, 0.9f, 0.8f, 0.2f, 250.0f, 0.0f);
+
+	std::vector<Hitable*> objectList;
+	objectList.push_back(new Plane(1, Matrix::createTranslationMatrix(0.0f, -1.0f, 0.0f), materialPlane));
+	objectList.push_back(new Sphere(2, Matrix::createIdentityMatrix(4), materialBall));
+
+	std::vector<PointLight> lightList;
+	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(2.0f, 4.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
+
+	//Generates a World object
+	World world(objectList, lightList);
+
+	float _1ByRoot2 = 1.0f / sqrt(2);
+
+	Ray rayIn(Point(0.0f, 0.0f, 3.0f), Vector(0, -_1ByRoot2, -_1ByRoot2));
+	Intersection intersection(sqrt(2),objectList[0]);
+	IntersectionComputations comps(rayIn, intersection);
+	comps.prepareComputations(rayIn, intersection);
+	std::cout << PointLight::getReflectedColor(world, comps) << '\n';
+
+	return 0;
+}
+
+*/
+
 //I'll give a quick rundown of how to use this thing
 //I'm planning on adding a better system of doing this rather than changing main()
 //Maybe with passing arguments via a file or something, but for now this will do
@@ -63,8 +98,8 @@ int main() {
 	StripePattern* sPat = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
 
 
-	Material materialPlane(bPat, 0.1f, 0.7f, 0.3f, 100.0f);
-	Material materialBall(sPat, 0.1f, 0.8f, 0.2f, 250.0f);
+	Material materialPlane(bPat, 0.1f, 0.7f, 0.3f, 100.0f, 0.0f);
+	Material materialBall(sPat, 0.1f, 0.8f, 0.2f, 250.0f, 0.0f);
 	
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createRotationMatrix('x', constants::gPI / 4.0f, false), materialPlane));
@@ -124,7 +159,6 @@ int main() {
 	return 0;
 }
 
-
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera) {
 	//The x and y offset values that point to the point in space that represents the center of the pixel we want to draw a ray to
 	//The 0.5f gives us the center of that pixel. Without the 0.5f, we would get the top left corner, which might look weird
@@ -157,7 +191,7 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			if (world.hit(tempRay, intersections, computations)) {
 				//std::cout << "World hit!\n";
 				computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
-				colorArray.push_back(PointLight::getLighting(computations.m_object->getMaterial(), world.m_lightList, computations.m_pointOverIntersection, computations.m_eyeVector, computations.m_normalAtIntersectionPoint, world, computations.m_object));
+				colorArray.push_back(PointLight::getLighting(world, computations));
 			}
 			else {
 				colorArray.push_back(Color(0.0f, 0.0f, 0.0f));
