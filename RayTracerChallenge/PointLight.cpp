@@ -74,6 +74,10 @@ Color PointLight::getLighting(const PointLight& light, World& world, Intersectio
 }
 
 Color PointLight::getLighting(World& world, IntersectionComputations& comps) {
+	/* FOR DEBUGGING
+	std::cout << "Called getLighting(World& , IntersectionComputations& ) for intersection at: " << comps.m_pointOverIntersection << '\n';
+	std::cout << "Object Encountered: " << comps.m_object->getID() << '\n';
+	*/
 	Color finalColor(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < world.m_lightList.size(); ++i) {
 		finalColor += getLighting(world.m_lightList[i], world, comps, isInShadow(comps.m_pointOverIntersection, world, world.m_lightList[i]));
@@ -102,10 +106,24 @@ bool PointLight::isInShadow(const Point& point, World& world, const PointLight& 
 	return isInShadow;
 }
 
-Color PointLight::getReflectedColor(World& world, IntersectionComputations& computations) {
-	if (MathToolbox::equal(computations.m_object->getMaterial().m_reflectivity, 0.0f)) {
+Color PointLight::getReflectedColor(World& world, IntersectionComputations& computations, int remainingReflectionCalls) {
+	if (MathToolbox::equal(computations.m_object->getMaterial().m_reflectivity, 0.0f) || remainingReflectionCalls <= 0 ) {
 		return Color(0.0f, 0.0f, 0.0f);
 	}
-	Ray reflectedRay = Ray(computations.m_intersectionPoint, computations.m_reflectedVector);
+	Intersections tempIntersections;
+	IntersectionComputations tempComps;
+	Ray reflectedRay = Ray(computations.m_pointOverIntersection, computations.m_reflectedVector);
+	Color reflectedColor = PointLight::getColorAt(reflectedRay, world, tempIntersections, tempComps, --remainingReflectionCalls );
+	return (Color)( reflectedColor * computations.m_object->getMaterial().m_reflectivity );
+}
+
+Color PointLight::getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations, int remainingReflectionCalls) {
+	//static int numTimes = 0;
+	if (world.hit(tempRay, intersections, computations)) {
+		computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
+		//std::cout << "World hit!" << ++numTimes <<" @ "<< computations.m_intersectionPoint << '\n';
+		return (Color) (PointLight::getLighting(world, computations) + PointLight::getReflectedColor(world, computations, remainingReflectionCalls));
+	}
+
 	return Color(0.0f, 0.0f, 0.0f);
 }
