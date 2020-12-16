@@ -41,10 +41,11 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 int getLowerLimit(int currentIndex, int height);
 int getUpperLimit(int currentIndex, int maxIndex, int height);
 
+/*
 int main() {
 
-	Material materialPlane(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.9f);
-	Material materialBall(Color(1.0f, 0.0f, 0.0f), 1.0f, 0.8f, 0.2f, 250.0f, 0.9f);
+	Material materialPlane(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f);
+	Material materialBall(Color(1.0f, 0.0f, 0.0f), 1.0f, 0.8f, 0.2f, 250.0f, 0.5f);
 
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createTranslationMatrix(0.0f, -1.0f, 0.0f), materialPlane));
@@ -65,10 +66,14 @@ int main() {
 	IntersectionComputations temp1;
 	//WTF is going on here ???? Fix it!!!
 	comps.prepareComputations(rayIn, intersection);
-	std::cout << PointLight::getColorAt(rayIn, world, temp, temp1) << '\n';
+
+	int tempRecursionCalls = constants::gReflectionRecursionLimit;
+
+	std::cout << PointLight::getColorAt(rayIn, world, temp, temp1, tempRecursionCalls) << '\n';
 
 	return 0;
 }
+*/
 
 //I'll give a quick rundown of how to use this thing
 //I'm planning on adding a better system of doing this rather than changing main()
@@ -76,35 +81,35 @@ int main() {
 
 //Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
 
-/*
 //Now we begin the actual main() function
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(6.0f, 0.5f, 6.0f);
-	Point cameraTo(0.0f, 3.5f, 0.0f);
+	Point cameraFrom(-4.0f, 5.0f, 4.0f);
+	Point cameraTo(0.0f, 0.5f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
-	StripePattern* sPat1 = new StripePattern(Matrix::createIdentityMatrix(4), Color(0.3f, 0.9f, 0.3f), Color(1.0f, 1.0f, 1.0f));
-	StripePattern* sPat2 = new StripePattern(Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(0.3f, 0.9f, 0.3f), Color(0.9f, 0.9f, 0.9f));
-	BlendedPattern* bPat = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat1, sPat2);
-	StripePattern* sPat = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
+	StripePattern* sPat1 = new StripePattern(Matrix::createIdentityMatrix(4), Color(0.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f));
+	StripePattern* sPat2 = new StripePattern(Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(0.1f, 0.1f, 0.1f), Color(1.0f, 1.0f, 1.0f));
+	BlendedPattern* bPat1 = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat1, sPat2);
+	StripePattern* sPat3 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
+	StripePattern* sPat4 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f) * Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
+	BlendedPattern* bPat2 = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat3, sPat4);
+	CheckersPattern* cPat1 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
+	CheckersPattern* cPat2 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(0.6f, 0.0f, 0.6f), Color(0.9f, 0.9f, 0.0f));
 
-
-	Material materialPlane(bPat, 0.1f, 0.7f, 0.3f, 100.0f, 0.7f);
-	Material materialBall(sPat, 0.1f, 0.8f, 0.2f, 250.0f, 0.0f);
+	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f);
+	Material materialBall(bPat2, 0.1f, 0.8f, 0.2f, 250.0f, 0.1f);
 	
 	std::vector<Hitable*> objectList;
-	objectList.push_back(new Plane(1, Matrix::createRotationMatrix('x', constants::gPI / 2.0f, true), materialPlane));
-	objectList.push_back(new Plane(2, Matrix::createRotationMatrix('z', constants::gPI / 2.0f, true), materialPlane));
-	objectList.push_back(new Plane(3, Matrix::createIdentityMatrix(4), materialPlane));
-	objectList.push_back(new Sphere(4, Matrix::createTranslationMatrix(2.0f,2.5f,2.0f), materialBall));
+	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
+	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,1.0f,0.0f) * Matrix::createScalingMatrix(2.0f,2.0f,2.0f) , materialBall));
 
 	std::vector<PointLight> lightList;
-	lightList.push_back(PointLight(Point(2.0f, 7.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
-	lightList.push_back(PointLight(Point(5.0f, 1.5f, 5.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(-5.0f, 7.0f, 7.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(-1.0f, 2.0f, 4.0f), Color(1.0f, 1.0f, 1.0f)));
 	
 	//Generates a World object
 	World world(objectList, lightList);
@@ -155,7 +160,6 @@ int main() {
 
 	return 0;
 }
-*/
 
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera) {
 	//The x and y offset values that point to the point in space that represents the center of the pixel we want to draw a ray to
@@ -186,9 +190,9 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			Intersections intersections;
 			IntersectionComputations computations;
 
+			int tempRecursionCalls = constants::gReflectionRecursionLimit;
 
-
-			colorArray.push_back(PointLight::getColorAt(tempRay, world, intersections, computations));
+			colorArray.push_back(PointLight::getColorAt(tempRay, world, intersections, computations, tempRecursionCalls));
 		}
 	}
 }

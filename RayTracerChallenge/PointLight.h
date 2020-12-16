@@ -32,9 +32,9 @@ class PointLight {
 		static Color getLighting(const PointLight& light, World& world, IntersectionComputations& comps, bool isInShadow);
 		static Color getLighting(World& world, IntersectionComputations& comps);
 
-		static Color getReflectedColor(World& world, IntersectionComputations& computations);
+		static Color getReflectedColor(World& world, IntersectionComputations& computations, int remainingReflectionCalls);
 
-		static Color getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations);
+		static Color getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations, int remainingReflectionCalls);
 
 		static bool isInShadow(const Point& point, World& world, const PointLight& light);
 };
