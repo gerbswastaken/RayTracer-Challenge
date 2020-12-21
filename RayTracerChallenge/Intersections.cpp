@@ -39,3 +39,9 @@ bool Intersections::hit() {
 	m_firstIntersectionIndex = -1;
 	return false;	
 }
+
+bool operator==(const Intersection& intersection1, const Intersection& intersection2) {
+	if (!MathToolbox::equal(intersection1.getParameter(), intersection2.getParameter())) return false;
+	if (intersection1.getObject() != intersection2.getObject()) return false;
+	return true;
+}

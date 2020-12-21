@@ -120,8 +120,11 @@ Color PointLight::getReflectedColor(World& world, IntersectionComputations& comp
 Color PointLight::getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations, int remainingReflectionCalls) {
 	//static int numTimes = 0;
 	if (world.hit(tempRay, intersections, computations)) {
-		computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex]);
-		//std::cout << "World hit!" << ++numTimes <<" @ "<< computations.m_intersectionPoint << '\n';
+
+		//Fix this Later!!!
+		computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex], intersections);
+		//Fix this later!!!!
+
 		return (Color) (PointLight::getLighting(world, computations) + PointLight::getReflectedColor(world, computations, remainingReflectionCalls));
 	}
 

@@ -41,15 +41,17 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 int getLowerLimit(int currentIndex, int height);
 int getUpperLimit(int currentIndex, int maxIndex, int height);
 
-/*
+
 int main() {
 
-	Material materialPlane(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f);
-	Material materialBall(Color(1.0f, 0.0f, 0.0f), 1.0f, 0.8f, 0.2f, 250.0f, 0.5f);
+	Material materialGlass1(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 1.5f, 1.0f);
+	Material materialGlass2(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 2.0f, 1.0f);
+	Material materialGlass3(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 2.5f, 1.0f);
 
 	std::vector<Hitable*> objectList;
-	objectList.push_back(new Plane(1, Matrix::createTranslationMatrix(0.0f, -1.0f, 0.0f), materialPlane));
-	objectList.push_back(new Plane(2, Matrix::createTranslationMatrix(0.0f, 4.0f, 0.0f), materialBall));
+	objectList.push_back(new Sphere(1, Matrix::createScalingMatrix(2.0f, 2.0f, 2.0f), materialGlass1));
+	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 0.0f, 0.25f), materialGlass2));
+	objectList.push_back(new Sphere(3, Matrix::createTranslationMatrix(0.0f, 0.0f, -0.25f), materialGlass3));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
@@ -59,21 +61,34 @@ int main() {
 
 	float _1ByRoot2 = 1.0f / sqrt(2);
 
-	Ray rayIn(Point(0.0f, 1.0f, -1.0f), Vector(0, -_1ByRoot2, _1ByRoot2));
+	Ray rayIn(Point(0.0f, 0.0f, 4.0f), Vector(0, 0, -1.0f));
 	Intersection intersection(sqrt(2),objectList[0]);
-	IntersectionComputations comps(rayIn, intersection);
+
+	std::vector<Intersection> intersectionVector;
+	intersectionVector.push_back(Intersection(2.0f, objectList[0]));
+	intersectionVector.push_back(Intersection(2.75f, objectList[1]));
+	intersectionVector.push_back(Intersection(3.25f, objectList[2]));
+	intersectionVector.push_back(Intersection(4.75f, objectList[1]));
+	intersectionVector.push_back(Intersection(5.25f, objectList[2]));
+	intersectionVector.push_back(Intersection(6.0f, objectList[0]));
+	Intersections tempIntersections(intersectionVector, 6);
+
+	IntersectionComputations comps(rayIn, intersection, tempIntersections);
 	Intersections temp;
 	IntersectionComputations temp1;
 	//WTF is going on here ???? Fix it!!!
-	comps.prepareComputations(rayIn, intersection);
 
 	int tempRecursionCalls = constants::gReflectionRecursionLimit;
-
-	std::cout << PointLight::getColorAt(rayIn, world, temp, temp1, tempRecursionCalls) << '\n';
+	for (int i = 0; i < 6; ++i) {
+		std::cout << "For Intersection #" << i << ": \n";
+		comps.prepareComputations(rayIn, intersectionVector[i], tempIntersections);
+		std::cout << "n1: " << comps.m_n1 << " | n2: " << comps.m_n2 << '\n';
+	}
+	
 
 	return 0;
 }
-*/
+
 
 //I'll give a quick rundown of how to use this thing
 //I'm planning on adding a better system of doing this rather than changing main()
@@ -82,6 +97,7 @@ int main() {
 //Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
 
 //Now we begin the actual main() function
+/*
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
@@ -100,8 +116,8 @@ int main() {
 	CheckersPattern* cPat1 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
 	CheckersPattern* cPat2 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(0.6f, 0.0f, 0.6f), Color(0.9f, 0.9f, 0.0f));
 
-	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f);
-	Material materialBall(bPat2, 0.1f, 0.8f, 0.2f, 250.0f, 0.1f);
+	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f, 1.0f, 0.2f);
+	Material materialBall(bPat2, 0.1f, 0.8f, 0.2f, 250.0f, 0.1f, 1.5f, 0.3f);
 	
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
@@ -160,6 +176,8 @@ int main() {
 
 	return 0;
 }
+
+*/
 
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera) {
 	//The x and y offset values that point to the point in space that represents the center of the pixel we want to draw a ray to

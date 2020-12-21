@@ -17,14 +17,19 @@ class IntersectionComputations {
 		Hitable* m_object;
 		Point m_intersectionPoint;
 		Point m_pointOverIntersection;
+		Point m_pointUnderIntersection;
 		Vector m_eyeVector;
 		Vector m_normalAtIntersectionPoint;
 		Vector m_reflectedVector;
+		//For Refractions
+		std::vector<Hitable*> m_intersectionObjectContainer;
+		float m_n1;
+		float m_n2;
 
-		IntersectionComputations(const Ray& ray, const Intersection& intersection);
+		IntersectionComputations(const Ray& ray, const Intersection& intersection, const Intersections& intersections);
 		IntersectionComputations();
 
-		void prepareComputations(const Ray& ray, const Intersection& intersection);
+		void prepareComputations(const Ray& ray, const Intersection& intersection, const Intersections& intersections);
 
 };
 
