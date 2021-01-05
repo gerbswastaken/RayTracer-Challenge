@@ -51,7 +51,7 @@ void IntersectionComputations::prepareComputations(const Ray& ray, const Interse
 	}
 	m_reflectedVector = Vector::getReflectedVector(ray.getDirection(), m_normalAtIntersectionPoint);
 	m_pointOverIntersection = m_intersectionPoint + (m_normalAtIntersectionPoint * constants::gEpsilon);
-	m_pointOverIntersection = m_intersectionPoint - (m_normalAtIntersectionPoint * constants::gEpsilon);
+	m_pointUnderIntersection = m_intersectionPoint - (m_normalAtIntersectionPoint * constants::gEpsilon);
 
 	//Loop through all possible intersections
 	for (int i = 0; i < intersections.m_intersectionCount; ++i) {

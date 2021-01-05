@@ -45,13 +45,9 @@ int getUpperLimit(int currentIndex, int maxIndex, int height);
 int main() {
 
 	Material materialGlass1(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 1.5f, 1.0f);
-	Material materialGlass2(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 2.0f, 1.0f);
-	Material materialGlass3(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 2.5f, 1.0f);
 
 	std::vector<Hitable*> objectList;
-	objectList.push_back(new Sphere(1, Matrix::createScalingMatrix(2.0f, 2.0f, 2.0f), materialGlass1));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 0.0f, 0.25f), materialGlass2));
-	objectList.push_back(new Sphere(3, Matrix::createTranslationMatrix(0.0f, 0.0f, -0.25f), materialGlass3));
+	objectList.push_back(new Sphere(1, Matrix::createIdentityMatrix(4), materialGlass1));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(7.0f, 5.0f, 3.0f), Color(1.0f, 1.0f, 1.0f)));
@@ -61,30 +57,18 @@ int main() {
 
 	float _1ByRoot2 = 1.0f / sqrt(2);
 
-	Ray rayIn(Point(0.0f, 0.0f, 4.0f), Vector(0, 0, -1.0f));
-	Intersection intersection(sqrt(2),objectList[0]);
+	Ray rayIn(Point(0.0f, 0.99f, 2.0f), Vector(0.0f, 0.0f, -1.0f));
+	Intersection intersection(1.8589f, objectList[0]);
 
 	std::vector<Intersection> intersectionVector;
-	intersectionVector.push_back(Intersection(2.0f, objectList[0]));
-	intersectionVector.push_back(Intersection(2.75f, objectList[1]));
-	intersectionVector.push_back(Intersection(3.25f, objectList[2]));
-	intersectionVector.push_back(Intersection(4.75f, objectList[1]));
-	intersectionVector.push_back(Intersection(5.25f, objectList[2]));
-	intersectionVector.push_back(Intersection(6.0f, objectList[0]));
-	Intersections tempIntersections(intersectionVector, 6);
-
-	IntersectionComputations comps(rayIn, intersection, tempIntersections);
-	Intersections temp;
-	IntersectionComputations temp1;
-	//WTF is going on here ???? Fix it!!!
-
-	int tempRecursionCalls = constants::gReflectionRecursionLimit;
-	for (int i = 0; i < 6; ++i) {
-		std::cout << "For Intersection #" << i << ": \n";
-		comps.prepareComputations(rayIn, intersectionVector[i], tempIntersections);
-		std::cout << "n1: " << comps.m_n1 << " | n2: " << comps.m_n2 << '\n';
-	}
+	intersectionVector.push_back(Intersection(1.8589f, objectList[0]));
 	
+	Intersections intersections(intersectionVector, 1);
+	
+	IntersectionComputations computations(rayIn, intersection, intersections);
+	computations.prepareComputations(rayIn, intersection, intersections);
+
+	std::cout << PointLight::schlickReflectance(computations) << '\n';
 
 	return 0;
 }
@@ -97,13 +81,14 @@ int main() {
 //Firstly, go to "Constants.h" to change some of the constants associated with the Ray-Tracing engine
 
 //Now we begin the actual main() function
+
 /*
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(-4.0f, 5.0f, 4.0f);
-	Point cameraTo(0.0f, 0.5f, 0.0f);
+	Point cameraFrom(-0.01f, 3.3f, 0.01f);
+	Point cameraTo(0.0f, 0.0f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
@@ -116,17 +101,17 @@ int main() {
 	CheckersPattern* cPat1 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
 	CheckersPattern* cPat2 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(0.6f, 0.0f, 0.6f), Color(0.9f, 0.9f, 0.0f));
 
-	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f, 1.0f, 0.2f);
-	Material materialBall(bPat2, 0.1f, 0.8f, 0.2f, 250.0f, 0.1f, 1.5f, 0.3f);
-	
+	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f, 1.0f, 0.0f);
+	Material materialBall(bPat2, 0.01f, 0.0f, 0.0f, 250.0f, 0.0f, 1.5f, 0.9f);
+
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f,1.0f,0.0f) * Matrix::createScalingMatrix(2.0f,2.0f,2.0f) , materialBall));
+	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 1.0f, 0.0f) * Matrix::createScalingMatrix(2.0f, 2.0f, 2.0f), materialBall));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(-5.0f, 7.0f, 7.0f), Color(1.0f, 1.0f, 1.0f)));
 	lightList.push_back(PointLight(Point(-1.0f, 2.0f, 4.0f), Color(1.0f, 1.0f, 1.0f)));
-	
+
 	//Generates a World object
 	World world(objectList, lightList);
 
@@ -208,9 +193,11 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 			Intersections intersections;
 			IntersectionComputations computations;
 
-			int tempRecursionCalls = constants::gReflectionRecursionLimit;
+			int tempReflectionCalls = constants::gReflectionRecursionLimit;
+			int tempRefractionCalls = constants::gRefractionRecursionLimit;
 
-			colorArray.push_back(PointLight::getColorAt(tempRay, world, intersections, computations, tempRecursionCalls));
+
+			colorArray.push_back(PointLight::getColorAt(tempRay, world, intersections, computations, tempReflectionCalls, tempRefractionCalls));
 		}
 	}
 }

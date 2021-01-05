@@ -106,27 +106,81 @@ bool PointLight::isInShadow(const Point& point, World& world, const PointLight& 
 	return isInShadow;
 }
 
-Color PointLight::getReflectedColor(World& world, IntersectionComputations& computations, int remainingReflectionCalls) {
+Color PointLight::getReflectedColor(World& world, IntersectionComputations& computations, int remainingReflectionCalls, int remainingRefractionCalls) {
 	if (MathToolbox::equal(computations.m_object->getMaterial().m_reflectivity, 0.0f) || remainingReflectionCalls <= 0 ) {
 		return Color(0.0f, 0.0f, 0.0f);
 	}
 	Intersections tempIntersections;
 	IntersectionComputations tempComps;
 	Ray reflectedRay = Ray(computations.m_pointOverIntersection, computations.m_reflectedVector);
-	Color reflectedColor = PointLight::getColorAt(reflectedRay, world, tempIntersections, tempComps, --remainingReflectionCalls );
+	Color reflectedColor = PointLight::getColorAt(reflectedRay, world, tempIntersections, tempComps, --remainingReflectionCalls, remainingRefractionCalls );
 	return (Color)( reflectedColor * computations.m_object->getMaterial().m_reflectivity );
 }
 
-Color PointLight::getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations, int remainingReflectionCalls) {
-	//static int numTimes = 0;
+Color PointLight::getRefractedColor(World& world, IntersectionComputations& computations, int remainingReflectionCalls, int remainingRefractiveCalls) {
+	//Check whether the object is completely opaque or remainingRefractiveCalls = 0
+	//In such cases, there will be no contribution of this light ray on getRefractedColor().
+	if (MathToolbox::equal(computations.m_object->getMaterial().m_transparency, 0.0f) || remainingRefractiveCalls <= 0) {
+		return Color(0.0f, 0.0f, 0.0f);
+	}
+	//Now to check whether Total Internal Reflection occurs:
+	//Snell's Law states that n1 * sin(theta1) = n2 * sin(theta2)
+	//if sin(theta2) > 1, then Total Internal Reflection occurs.
+	//Hence, we need to test for the value of (n1 / n2) * sin(theta1), where theta1 is the angle of incidence
+	float cosTheta1 = dotProduct(computations.m_eyeVector, computations.m_normalAtIntersectionPoint);
+	float refractiveIndexRatio = computations.m_n1 / computations.m_n2;
+	//sinSquaredTheta2 = (n1 / n2)^2 * sin^2(theta1) = (n1 / n2)^2 * (1 - cos^2(theta1))
+	float sinSquaredTheta2 = (refractiveIndexRatio * refractiveIndexRatio) *  (1.0f - (cosTheta1 * cosTheta1));
+	//No need to find square root, as if sinSquaredTheta1 > 1, sinTheta1 > 1
+	if (sinSquaredTheta2 > 1.0f) {
+		//We return Black because the light ray cannot escape, effectively nullifying its effect on getRefractedColor().
+		return Color(0.0f, 0.0f, 0.0f);
+	}
+	std::cout << "getRefractedLight() called!\n";
+	float cosTheta2 = sqrt(1.0f - sinSquaredTheta2);
+	Vector refractedDirection = (computations.m_normalAtIntersectionPoint * ((refractiveIndexRatio * cosTheta1) - cosTheta2)) - (computations.m_eyeVector * refractiveIndexRatio);
+	Ray refractedRay(computations.m_pointUnderIntersection, refractedDirection);
+	Intersections tempIntersections;
+	IntersectionComputations tempComputations;
+
+	Color refractedColor = PointLight::getColorAt(refractedRay, world, tempIntersections, tempComputations, remainingReflectionCalls,  --remainingRefractiveCalls);
+	return (Color)(refractedColor * computations.m_object->getMaterial().m_transparency);
+}
+
+Color PointLight::getColorAt(const Ray& tempRay, World& world, Intersections& intersections, IntersectionComputations& computations, int remainingReflectionCalls, int remainingRefractionCalls) {
 	if (world.hit(tempRay, intersections, computations)) {
-
-		//Fix this Later!!!
 		computations.prepareComputations(tempRay, intersections.m_intersections[intersections.m_firstIntersectionIndex], intersections);
-		//Fix this later!!!!
+		//return (Color) (PointLight::getLighting(world, computations) + PointLight::getReflectedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls) + PointLight::getRefractedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls));
 
-		return (Color) (PointLight::getLighting(world, computations) + PointLight::getReflectedColor(world, computations, remainingReflectionCalls));
+		if (computations.m_object->getMaterial().m_reflectivity > 0.0f && computations.m_object->getMaterial().m_transparency > 0.0f) {
+			float reflectance = PointLight::schlickReflectance(computations);
+			return (Color)(PointLight::getLighting(world, computations) + (reflectance * PointLight::getReflectedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls)) + ( (1.0f - reflectance) * PointLight::getRefractedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls)));
+		}
+		return (Color)(PointLight::getLighting(world, computations) + PointLight::getReflectedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls) + PointLight::getRefractedColor(world, computations, remainingReflectionCalls, remainingRefractionCalls));
 	}
 
 	return Color(0.0f, 0.0f, 0.0f);
+}
+
+float PointLight::schlickReflectance(IntersectionComputations& computations) {
+	float cosAngle = dotProduct(computations.m_eyeVector, computations.m_normalAtIntersectionPoint);
+
+	//Total Internal Reflection can only occur if n1 > n2
+	if (computations.m_n1 > computations.m_n2) {
+		float nRatio = computations.m_n1 / computations.m_n2;
+		float sinSquared_t = nRatio * nRatio * (1.0f - (cosAngle * cosAngle));
+		if (sinSquared_t > 1.0f) return 1.0f;
+	
+		float cosAngle_t = sqrt(1.0f - sinSquared_t);
+		//when n1 > n2, use cosAngle_t instead of cosAngle
+		cosAngle = cosAngle_t;
+	}
+
+	float rNaught = ((computations.m_n1 - computations.m_n2) / (computations.m_n1 + computations.m_n2)) * ((computations.m_n1 - computations.m_n2) / (computations.m_n1 + computations.m_n2));
+	float OneMinusCosRaisedTo5 = 1.0f;
+	for (int i = 0; i < 5; ++i) {
+		OneMinusCosRaisedTo5 *= (1.0f - cosAngle);
+	}
+
+	return rNaught + ((1.0f - rNaught) * OneMinusCosRaisedTo5);
 }
