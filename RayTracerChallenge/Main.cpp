@@ -7,6 +7,8 @@
 #include "Ray.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Cube.h"
+#include "Cylinder.h"
 #include "PointLight.h"
 #include "World.h"
 #include "Camera.h"
@@ -41,7 +43,7 @@ void prepareThread(std::vector<Color>& colorArray, const Camera& camera, World& 
 int getLowerLimit(int currentIndex, int height);
 int getUpperLimit(int currentIndex, int maxIndex, int height);
 
-
+/*
 int main() {
 
 	Material materialGlass1(Color(0.0f, 1.0f, 0.0f), 1.0f, 0.7f, 0.3f, 100.0f, 0.5f, 1.5f, 1.0f);
@@ -68,10 +70,27 @@ int main() {
 	IntersectionComputations computations(rayIn, intersection, intersections);
 	computations.prepareComputations(rayIn, intersection, intersections);
 
-	std::cout << PointLight::schlickReflectance(computations) << '\n';
+	Hitable* cubeObject = new Cube(1, Matrix::createIdentityMatrix(4), materialGlass1);
+	std::vector<Point> pointList;
+	pointList.push_back(Point(1.0f, 0.5f, -0.8f));
+	pointList.push_back(Point(-1.0f, -0.2f, 0.9f));
+	pointList.push_back(Point(-0.4f, 1.0f, -0.1f));
+	pointList.push_back(Point(0.3f, -1.0f, -0.7f));
+	pointList.push_back(Point(-0.6f, 0.3f, 1.0f));
+	pointList.push_back(Point(0.4f, 0.4f, -1.0f));
+	pointList.push_back(Point(1.0f, 1.0f, 1.0f));
+	pointList.push_back(Point(-1.0f, -1.0f, -1.0f));
+
+
+
+	for (int i = 0; i < pointList.size(); ++i) {
+		std::cout << cubeObject->getLocalNormalAtPoint(pointList[i]) << '\n';
+	}
 
 	return 0;
 }
+
+*/
 
 
 //I'll give a quick rundown of how to use this thing
@@ -82,13 +101,12 @@ int main() {
 
 //Now we begin the actual main() function
 
-/*
 int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(-0.01f, 3.3f, 0.01f);
-	Point cameraTo(0.0f, 0.0f, 0.0f);
+	Point cameraFrom(-2.0f, 0.7f, 2.0f);
+	Point cameraTo(0.0f, 2.0f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
@@ -102,15 +120,17 @@ int main() {
 	CheckersPattern* cPat2 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(0.6f, 0.0f, 0.6f), Color(0.9f, 0.9f, 0.0f));
 
 	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f, 1.0f, 0.0f);
-	Material materialBall(bPat2, 0.01f, 0.0f, 0.0f, 250.0f, 0.0f, 1.5f, 0.9f);
+	Material materialBall(bPat2, 0.1f, 0.6f, 0.3f, 250.0f, 0.3f, 1.5f, 0.05f);
 
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
-	objectList.push_back(new Sphere(2, Matrix::createTranslationMatrix(0.0f, 1.0f, 0.0f) * Matrix::createScalingMatrix(2.0f, 2.0f, 2.0f), materialBall));
+	//objectList.push_back(new Cube(2, Matrix::createTranslationMatrix(0.0f, 2.0f, 0.0f) * Matrix::createRotationMatrix('x', constants::gPI / 4.0f,true) * Matrix::createRotationMatrix('z', constants::gPI / 4.0f, true) * Matrix::createRotationMatrix('y', constants::gPI / 4.0f, true), materialBall ));
+	objectList.push_back(new Cylinder(true, -1.0f, 1.0f, 2, Matrix::createTranslationMatrix(0.0f, 2.0f, 0.0f), materialBall));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(-5.0f, 7.0f, 7.0f), Color(1.0f, 1.0f, 1.0f)));
 	lightList.push_back(PointLight(Point(-1.0f, 2.0f, 4.0f), Color(1.0f, 1.0f, 1.0f)));
+	lightList.push_back(PointLight(Point(-1.0f, 5.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
 
 	//Generates a World object
 	World world(objectList, lightList);
@@ -162,7 +182,6 @@ int main() {
 	return 0;
 }
 
-*/
 
 Ray getRayForPixel(int xPixel, int yPixel, const Camera& camera) {
 	//The x and y offset values that point to the point in space that represents the center of the pixel we want to draw a ray to

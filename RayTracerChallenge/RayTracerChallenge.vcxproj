@@ -145,6 +145,8 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="CheckersPattern.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GradientPattern.cpp" />
     <ClCompile Include="Hitable.cpp" />
@@ -178,6 +180,8 @@
     <ClInclude Include="CheckersPattern.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="GradientPattern.h" />
     <ClInclude Include="Hitable.h" />
