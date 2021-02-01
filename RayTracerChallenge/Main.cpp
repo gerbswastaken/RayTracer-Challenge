@@ -9,6 +9,7 @@
 #include "Plane.h"
 #include "Cube.h"
 #include "Cylinder.h"
+#include "Cone.h"
 #include "PointLight.h"
 #include "World.h"
 #include "Camera.h"
@@ -105,31 +106,31 @@ int main() {
 	//This Ray-Tracer uses a Right-handed coordinate system:
 	//X-axis is to the Right, Y-axis is vertically Upwards, and Z-axis is the cross product
 
-	Point cameraFrom(-2.0f, 0.7f, 2.0f);
-	Point cameraTo(0.0f, 2.0f, 0.0f);
+	Point cameraFrom(-2.0f, 2.7f, 2.0f);
+	Point cameraTo(0.0f, 1.5f, 0.0f);
 	Vector cameraUpVector(0.0f, 1.0f, 0.0f);
 	Camera camera(constants::gWidth, constants::gHeight, (constants::gPI / 2.0f), Matrix::createViewTransformationMatrix(cameraTo, cameraFrom, cameraUpVector));
 
 	StripePattern* sPat1 = new StripePattern(Matrix::createIdentityMatrix(4), Color(0.0f, 0.0f, 0.0f), Color(1.0f, 1.0f, 1.0f));
 	StripePattern* sPat2 = new StripePattern(Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(0.1f, 0.1f, 0.1f), Color(1.0f, 1.0f, 1.0f));
 	BlendedPattern* bPat1 = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat1, sPat2);
-	StripePattern* sPat3 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
-	StripePattern* sPat4 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f) * Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 1.0f));
+	StripePattern* sPat3 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 0.0f, 1.0f));
+	StripePattern* sPat4 = new StripePattern(Matrix::createScalingMatrix(0.3f, 0.3f, 0.3f) * Matrix::createRotationMatrix('y', constants::gPI / 2.0f, true), Color(1.0f, 1.0f, 0.0f), Color(1.0f, 0.0f, 1.0f));
 	BlendedPattern* bPat2 = new BlendedPattern(Matrix::createIdentityMatrix(4), sPat3, sPat4);
 	CheckersPattern* cPat1 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f));
 	CheckersPattern* cPat2 = new CheckersPattern(Matrix::createIdentityMatrix(4), Color(0.6f, 0.0f, 0.6f), Color(0.9f, 0.9f, 0.0f));
 
 	Material materialPlane(bPat1, 0.1f, 0.5f, 0.3f, 50.0f, 0.8f, 1.0f, 0.0f);
-	Material materialBall(bPat2, 0.1f, 0.6f, 0.3f, 250.0f, 0.3f, 1.5f, 0.05f);
+	Material materialBall(bPat2, 0.15f, 0.5f, 0.5f, 200.0f, 0.4f, 1.5f, 0.3f);
 
 	std::vector<Hitable*> objectList;
 	objectList.push_back(new Plane(1, Matrix::createIdentityMatrix(4), materialPlane));
 	//objectList.push_back(new Cube(2, Matrix::createTranslationMatrix(0.0f, 2.0f, 0.0f) * Matrix::createRotationMatrix('x', constants::gPI / 4.0f,true) * Matrix::createRotationMatrix('z', constants::gPI / 4.0f, true) * Matrix::createRotationMatrix('y', constants::gPI / 4.0f, true), materialBall ));
-	objectList.push_back(new Cylinder(true, -1.0f, 1.0f, 2, Matrix::createTranslationMatrix(0.0f, 2.0f, 0.0f), materialBall));
+	objectList.push_back(new Cone(true, -1.0f, 1.0f, 2, Matrix::createTranslationMatrix(0.0f, 2.0f, 0.0f), materialBall));
 
 	std::vector<PointLight> lightList;
 	lightList.push_back(PointLight(Point(-5.0f, 7.0f, 7.0f), Color(1.0f, 1.0f, 1.0f)));
-	lightList.push_back(PointLight(Point(-1.0f, 2.0f, 4.0f), Color(1.0f, 1.0f, 1.0f)));
+	//lightList.push_back(PointLight(Point(-1.0f, 2.0f, 4.0f), Color(1.0f, 1.0f, 1.0f)));
 	lightList.push_back(PointLight(Point(-1.0f, 5.0f, 2.0f), Color(1.0f, 1.0f, 1.0f)));
 
 	//Generates a World object
